@@ -1,12 +1,15 @@
 //
-//  File.swift
-//  
-//
 //  Created by Cedric Gatay on 29/05/2020.
 //
 
 import Foundation
 
+/***
+ * Base orchestrator to subclass for specifying types to use for `IN` and `OUT`
+ *
+ * `IN` type is the type of objects that will be produced by long running task
+ * `OUT` type is the type of objects that will be produced on our end and be fed to the long running task
+ */
 public struct KBaseNativeOrchestrator<IN, OUT>: KNativeOrchestrator{
     public typealias ProviderType = IN
     public typealias Provider = LockingInProvider<ProviderType>
@@ -17,6 +20,10 @@ public struct KBaseNativeOrchestrator<IN, OUT>: KNativeOrchestrator{
     
     public init(){}
     
+    /***
+     * main entry point for running a `mainTask`
+     * accepting `IN` and `OUT` handlers to communicate both ways
+     */
     public func runTool(mainTask: @escaping (@escaping ProviderClosure, @escaping ConsumerClosure) -> (),
                  inProvider: @escaping ProviderClosure,
                  outConsumer: @escaping ConsumerClosure) -> DispatchGroup {
@@ -34,6 +41,10 @@ public struct KBaseNativeOrchestrator<IN, OUT>: KNativeOrchestrator{
 }
 
 
+/***
+ * In provider implementation dispatching and locking calls to underlying closure in another queue.
+ * This allows proper asynchronous processing without locking our main task
+ */
 public class LockingInProvider<T>: InProvider{
     public typealias ItemType = T
     let wrapped: () -> T
@@ -56,6 +67,10 @@ public class LockingInProvider<T>: InProvider{
     }
 }
 
+/***
+* Out consumer implementation dispatching and locking calls to underlying closure in another queue.
+* This allows proper asynchronous processing without locking our main task
+*/
 public class LockingOutConsumer<T>: OutConsumer{
     public typealias ItemType = T
     let wrapped: (T) -> ()

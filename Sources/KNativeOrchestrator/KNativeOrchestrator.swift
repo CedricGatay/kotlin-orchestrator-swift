@@ -1,4 +1,10 @@
 import Foundation
+/***
+ * Abstract protocol describing the way for Swift code to invoke a long running task
+ * with proper `IN` / `OUT` handling.
+ *
+ * @see KBaseNativeOrchestrator for an implementation
+ */
 public protocol KNativeOrchestrator {
     typealias ProviderClosure = () -> ProviderType
     typealias ConsumerClosure = (ConsumerType) -> ()
