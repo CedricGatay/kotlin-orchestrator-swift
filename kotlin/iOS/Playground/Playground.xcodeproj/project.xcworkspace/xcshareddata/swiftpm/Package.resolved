@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "KNativeOrchestrator",
+        "repositoryURL": "https://github.com/CedricGatay/kotlin-orchestrator-swift",
+        "state": {
+          "branch": "master",
+          "revision": "3c91e5fdbe9d8ff16a656bf402dad81652ddb8bd",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
