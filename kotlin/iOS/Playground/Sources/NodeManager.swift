@@ -12,13 +12,17 @@ import orchestrator
 public class NodeManager {
     var counter = 0
     private var pause = 1000
+    private var workGroupEntered = false
     var item: DispatchWorkItem?
     let eklairQueue = DispatchQueue(label: "nodeManagerQueue", qos: .background)
     let workGroup = DispatchGroup()
+    
 
     func updatePause(_ pause: Float){
         self.pause = Int(pause * 1000)
-        workGroup.leave()
+        if workGroupEntered{
+            workGroup.leave()
+        }
     }
 
     func startInOut(closure: @escaping () -> Void, closureOut: @escaping (String) -> Void) {
@@ -48,7 +52,9 @@ public class NodeManager {
 
     func closureToStopCount() -> String{
         workGroup.enter()
+        workGroupEntered = true
         workGroup.wait()
+        workGroupEntered = false
         if pause == -1 {
             return "STOP"
         }
@@ -61,7 +67,9 @@ public class NodeManager {
 
     func stopInOut() {
         pause = -1 //magic count to stop the world for the POC
-        workGroup.leave()
+        if workGroupEntered{
+            workGroup.leave()
+        }
         item?.cancel()
     }
 
